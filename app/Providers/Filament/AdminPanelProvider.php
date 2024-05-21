@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\HealthCheckResults;
 use App\Filament\Pages\Settings\Settings;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -19,6 +20,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Outerweb\FilamentSettings\Filament\Plugins\FilamentSettingsPlugin;
+use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -47,6 +49,8 @@ class AdminPanelProvider extends PanelProvider
                         Settings::class,
                     ]),
             ])
+            ->plugin(FilamentSpatieLaravelHealthPlugin::make()
+                ->usingPage(HealthCheckResults::class))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

@@ -5,6 +5,18 @@ namespace App\Providers;
 use BezhanSalleh\FilamentLanguageSwitch\Enums\Placement;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Illuminate\Support\ServiceProvider;
+use Spatie\CpuLoadHealthCheck\CpuLoadCheck;
+use Spatie\Health\Checks\Checks\CacheCheck;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\DatabaseConnectionCountCheck;
+use Spatie\Health\Checks\Checks\DatabaseTableSizeCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\EnvironmentCheck;
+use Spatie\Health\Checks\Checks\OptimizedAppCheck;
+use Spatie\Health\Checks\Checks\PingCheck;
+use Spatie\Health\Checks\Checks\QueueCheck;
+use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
+use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +33,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Health::checks([
+            DebugModeCheck::new(),
+            CacheCheck::new(),
+            EnvironmentCheck::new(),
+            DatabaseCheck::new(),
+            DatabaseConnectionCountCheck::new()
+                ->failWhenMoreConnectionsThan(100),
+            DatabaseTableSizeCheck::new()
+                ->table('users', maxSizeInMb: 1_000),
+            UsedDiskSpaceCheck::new(),
+            QueueCheck::new(),
+        ]);
+
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch
                 ->locales(
