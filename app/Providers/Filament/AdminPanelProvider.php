@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Settings\Settings;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -17,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Outerweb\FilamentSettings\Filament\Plugins\FilamentSettingsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -34,12 +36,16 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Indigo,
             ])
             ->font('Poppins')
+            ->brandName(setting('general.name', config('app.name')))
             ->favicon(asset('assets/favicon.ico'))
             ->spa()
             ->collapsibleNavigationGroups(false)
             ->breadcrumbs(false)
             ->plugins([
-                //
+                FilamentSettingsPlugin::make()
+                    ->pages([
+                        Settings::class,
+                    ]),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
